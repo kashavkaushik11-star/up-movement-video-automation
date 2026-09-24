@@ -16,7 +16,7 @@ const OUT = path.join(process.cwd(), "output_up_movement");
 fs.mkdirSync(OUT, { recursive: true });
 
 async function gemini(prompt) {
-  const models = ["gemini-2.5-flash-lite", "gemini-3-flash-preview"];
+  const models = ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3-flash-preview"];
   for (const model of models) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
     for (let attempt = 1; attempt <= 2; attempt++) {
@@ -25,15 +25,23 @@ async function gemini(prompt) {
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.6,maxOutputTokens:900}})
       });
+      const bodyText = await r.text();
       if (r.ok) {
-        const d = await r.json();
-        const t = d.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("").trim();
-        if (t) return t;
+        try {
+          const d = JSON.parse(bodyText);
+          const t = d.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("").trim();
+          if (t) return t;
+          console.log("Gemini returned no text from", model, "attempt", attempt);
+        } catch (e) {
+          console.log("Gemini JSON parse error from", model, "attempt", attempt, bodyText.slice(0,500));
+        }
+      } else {
+        console.log("Gemini", model, "attempt", attempt, "HTTP", r.status, bodyText.slice(0,1000));
       }
-      await new Promise(x=>setTimeout(x, attempt*5000));
+      await new Promise(x=>setTimeout(x, Math.min(30000, attempt*10000)));
     }
   }
-  throw new Error("Gemini unavailable");
+  throw new Error("Gemini unavailable after trying all configured models");
 }
 
 async function image(prompt, file) {
