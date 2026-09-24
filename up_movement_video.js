@@ -67,19 +67,63 @@ shutil.copyfile(p,out)
 function ff(args){execFileSync("ffmpeg",["-y",...args],{stdio:"inherit"});}
 
 (async()=>{
-  const master=`Create a coherent cinematic visual sequence for the subject: "${TOPIC}".
-The output is for a vertical 9:16 short video, photorealistic, premium cinematic, strong depth and parallax.
-The CAMERA is the star of the shot. It must feel like a real moving camera, not a slideshow.
-Use a continuous spatial logic so the five shots can be joined.
+  const runKey = process.env.GITHUB_RUN_ID || String(Date.now());
+  const autoMode = !TOPIC || TOPIC === "AUTO_RANDOM";
+  const archetypes = [
+    "extreme water-slide POV with a hidden drop or unexpected exit",
+    "rooftop-to-street camera dive with a safe-looking path that suddenly changes",
+    "giant tunnel or pipe traversal with an unexpected opening at the end",
+    "roller-coaster or amusement-ride POV with a sudden visual reveal",
+    "mountain or cliff-path POV where the route suddenly disappears and reveals a safe hidden passage",
+    "underwater tunnel POV with a surprise object or creature-like visual reveal",
+    "warehouse or industrial-machine POV with moving obstacles and a last-second reveal",
+    "forest trail POV where the camera rushes toward an apparently blocked path that opens unexpectedly",
+    "giant slide, chute or spiral structure with a surprising final landing",
+    "street-level POV chasing a moving object that suddenly changes direction into a hidden space",
+    "bridge or cable-structure POV with a dramatic drop and unexpected safe platform",
+    "giant transparent tube or glass walkway with a sudden perspective illusion",
+    "sports or stunt POV with a fast approach followed by an unexpected visual payoff",
+    "theme-park attraction POV with a fake dead end followed by a sudden reveal",
+    "giant architectural structure where the camera enters a tiny opening and emerges somewhere surprising",
+    "cinematic escape-route POV with doors, turns and a final unexpected reveal",
+    "high-altitude POV diving toward a structure and discovering a hidden interior",
+    "giant ball or object rolling toward camera with a last-second perspective twist",
+    "construction-site POV with cranes, platforms and a sudden downward movement",
+    "mysterious real-world location POV built around scale, depth and one strong surprise"
+  ];
+  const archetype = archetypes[Number(runKey.replace(/\\D/g,"").slice(-4) || "0") % archetypes.length];
 
-Return exactly 5 lines, one scene prompt per line, labeled S1 through S5.
-S1: camera begins high above and dives downward toward the environment/subject.
-S2: camera continues descending rapidly through foreground layers with strong parallax.
-S3: camera reaches the subject and reveals the hidden/main detail as a surprise.
-S4: camera pushes closer around the revealed subject with natural motion and depth.
-S5: camera makes a final controlled move toward the subject/hand, ending on a strong reveal.
-Avoid text, logos, UI, watermarks, fake readable signs, split screens, collage, static camera, simple digital zoom, spinning camera, warped anatomy, extra fingers.
-Keep lighting realistic and dramatic. `;
+  const master=`Create ONE completely new viral short-video concept for this run.
+Run key: ${runKey}
+Preferred archetype: ${archetype}
+${autoMode ? "Choose the exact subject/location yourself. Do NOT reuse a generic hand/object reveal." : `User topic constraint: "${TOPIC}"`}
+
+REFERENCE STYLE:
+The reference is a realistic vertical POV/cinematic action video: a person/camera approaches a physical situation, commits to the movement, the camera travels rapidly through real space with strong depth, then an unexpected visual event/reveal happens and a human reaction or payoff lands at the end.
+The feeling should be "wait... what?!", not a normal slideshow.
+
+CORE RULES:
+- Every run must be a DIFFERENT scenario, location, action and surprise.
+- Do not make all videos about hands, objects, tubes, drops or the same stunt; vary the concept.
+- The first 2-3 seconds must create curiosity.
+- Build tension and spatial movement continuously.
+- Around 12-17 seconds, deliver the main surprise/OHPS moment.
+- End with a clear payoff/reaction/reveal.
+- The camera must physically move through the scene: approach, dive, follow, pass, turn, fall, rise or squeeze through space.
+- No static shots, no simple digital zoom, no slideshow, no fake camera shake.
+- Photorealistic live-action look, believable physics, natural lighting, realistic people/anatomy.
+- Keep one coherent location and subject across all five scenes.
+- Make it plausible enough to feel like a real viral phone/cinematic video, while the surprise can be visually extraordinary.
+- Avoid dangerous instructions or imitation guidance; this is visual storytelling only.
+
+Return exactly 5 lines, labeled S1 through S5.
+S1 = curiosity/setup: establish the strange situation and start moving.
+S2 = commitment: camera moves deeper/faster and raises tension.
+S3 = escalation: movement becomes visually intense and the audience thinks they know what will happen.
+S4 = SURPRISE/OHPS MOMENT: reveal the unexpected event, perspective or transformation.
+S5 = payoff: camera reaches/reframes the result and captures a believable reaction or final reveal.
+
+Do not include narration, captions, logos, UI, watermarks, readable text, split screens or collages.`;
   const raw=await gemini(master);
   const lines=raw.split(/\n+/).map(x=>x.trim()).filter(Boolean);
   const scenes=[];
