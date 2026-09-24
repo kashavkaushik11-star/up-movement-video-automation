@@ -5,11 +5,12 @@ const { execFileSync } = require("child_process");
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const CF_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
 const CF_ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID;
+const POLLINATIONS_API_KEY = process.env.POLLINATIONS_API_KEY || "";
 const HF_TOKEN = process.env.HF_TOKEN;
 const TOPIC = process.env.TOPIC || "AUTO_RANDOM";
 
-if (!GEMINI_API_KEY || !CF_TOKEN || !CF_ACCOUNT || !HF_TOKEN) {
-  throw new Error("Missing GEMINI_API_KEY, CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID or HF_TOKEN");
+if (!GEMINI_API_KEY || !HF_TOKEN) {
+  throw new Error("Missing GEMINI_API_KEY or HF_TOKEN");
 }
 
 const OUT = path.join(process.cwd(), "output_up_movement");
@@ -45,15 +46,45 @@ async function gemini(prompt) {
 }
 
 async function image(prompt, file) {
-  const url = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/ai/run/@cf/black-forest-labs/flux-1-schnell`;
-  const r = await fetch(url,{method:"POST",headers:{Authorization:`Bearer ${CF_TOKEN}`,"Content-Type":"application/json"},body:JSON.stringify({prompt:prompt.slice(0,2000)})});
-  if (!r.ok) throw new Error("FLUX "+r.status+" "+await r.text());
-  const ct=r.headers.get("content-type")||"";
-  if (ct.includes("application/json")) {
-    const d=await r.json();
-    if (!d.result?.image) throw new Error("FLUX returned no image");
-    fs.writeFileSync(file,Buffer.from(d.result.image,"base64"));
-  } else fs.writeFileSync(file,Buffer.from(await r.arrayBuffer()));
+  // Primary: Pollinations image endpoint (free/anonymous where available).
+  // Optional POLLINATIONS_API_KEY can raise limits; no key is required by this code.
+  const encoded = encodeURIComponent(prompt.slice(0,1800));
+  const pollUrl = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1365&nologo=true&model=flux`;
+  for (let attempt=1; attempt<=2; attempt++) {
+    try {
+      const headers = POLLINATIONS_API_KEY
+        ? {Authorization:`Bearer ${POLLINATIONS_API_KEY}`}
+        : {};
+      const r = await fetch(pollUrl,{headers,signal:AbortSignal.timeout(120000)});
+      const ct=r.headers.get("content-type")||"";
+      if (r.ok && ct.startsWith("image/")) {
+        fs.writeFileSync(file,Buffer.from(await r.arrayBuffer()));
+        console.log("Image provider: Pollinations");
+        return;
+      }
+      console.log("Pollinations attempt",attempt,"HTTP",r.status,(await r.text()).slice(0,300));
+    } catch(e) {
+      console.log("Pollinations attempt",attempt,"error",e.message);
+    }
+    await new Promise(x=>setTimeout(x,15000));
+  }
+
+  // Secondary: Cloudflare FLUX when its daily neuron quota is available.
+  if (CF_TOKEN && CF_ACCOUNT) {
+    const url = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/ai/run/@cf/black-forest-labs/flux-1-schnell`;
+    const r = await fetch(url,{method:"POST",headers:{Authorization:`Bearer ${CF_TOKEN}`,"Content-Type":"application/json"},body:JSON.stringify({prompt:prompt.slice(0,2000)})});
+    if (!r.ok) throw new Error("Image generation failed: Pollinations unavailable; Cloudflare FLUX "+r.status+" "+await r.text());
+    const ct=r.headers.get("content-type")||"";
+    if (ct.includes("application/json")) {
+      const d=await r.json();
+      if (!d.result?.image) throw new Error("Cloudflare FLUX returned no image");
+      fs.writeFileSync(file,Buffer.from(d.result.image,"base64"));
+    } else fs.writeFileSync(file,Buffer.from(await r.arrayBuffer()));
+    console.log("Image provider: Cloudflare FLUX fallback");
+    return;
+  }
+
+  throw new Error("Image generation failed: Pollinations unavailable and Cloudflare credentials are not configured");
 }
 
 function motion(imagePath,prompt,outPath){
@@ -145,7 +176,7 @@ Do not include narration, captions, logos, UI, watermarks, readable text, split 
   for(let i=0;i<5;i++){
     const ip=path.join(OUT,`scene_${i+1}.png`);
     const vp=path.join(OUT,`motion_${i+1}.mp4`);
-    const sp=`Photorealistic vertical 9:16 cinematic frame for "${TOPIC}". ${scenes[i]} Main subject clear and centered enough for vertical crop, realistic anatomy, realistic materials, strong foreground/background depth, natural dramatic lighting, premium film look, no text, no logos, no watermark.`;
+    const sp=`Photorealistic vertical 9:16 cinematic frame. Scene description: ${scenes[i]} Main subject clear and composed for a vertical 9:16 crop, realistic anatomy and materials, strong foreground/midground/background depth, natural dramatic lighting, premium live-action film look, believable physics, no text, no logos, no watermark.`;
     console.log("Generating image",i+1);
     await image(sp,ip);
     const clip=`/tmp/up_${i+1}.mp4`;
