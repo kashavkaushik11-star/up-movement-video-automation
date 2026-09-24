@@ -6,7 +6,7 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const CF_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
 const CF_ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID;
 const HF_TOKEN = process.env.HF_TOKEN;
-const TOPIC = process.env.TOPIC || "a mysterious object revealed inside a human hand";
+const TOPIC = process.env.TOPIC || "AUTO_RANDOM";
 
 if (!GEMINI_API_KEY || !CF_TOKEN || !CF_ACCOUNT || !HF_TOKEN) {
   throw new Error("Missing GEMINI_API_KEY, CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID or HF_TOKEN");
@@ -148,10 +148,21 @@ Do not include narration, captions, logos, UI, watermarks, readable text, split 
     const sp=`Photorealistic vertical 9:16 cinematic frame for "${TOPIC}". ${scenes[i]} Main subject clear and centered enough for vertical crop, realistic anatomy, realistic materials, strong foreground/background depth, natural dramatic lighting, premium film look, no text, no logos, no watermark.`;
     console.log("Generating image",i+1);
     await image(sp,ip);
-    console.log("Generating motion",i+1);
-    motion(ip,scenes[i],vp);
     const clip=`/tmp/up_${i+1}.mp4`;
-    ff(["-stream_loop","-1","-i",vp,"-t","4","-vf","scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30,format=yuv420p","-an","-c:v","libx264","-preset","veryfast","-crf","20",clip]);
+    if (i === 3) {
+      console.log("Generating AI motion for S4 OHPS scene only (free-mode: 1 ZeroGPU call)");
+      motion(ip,scenes[i],vp);
+      ff(["-stream_loop","-1","-i",vp,"-t","4","-vf","scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30,format=yuv420p","-an","-c:v","libx264","-preset","veryfast","-crf","20",clip]);
+    } else {
+      console.log("Generating cinematic camera movement for S"+(i+1)+" with FFmpeg (no GPU)");
+      const moves = [
+        "scale=2600:4622:force_original_aspect_ratio=increase,crop=1080:1920:x='(in_w-out_w)*0.50':y='(in_h-out_h)*(0.03+0.42*t/4)',fps=30,format=yuv420p",
+        "scale=2600:4622:force_original_aspect_ratio=increase,crop=1080:1920:x='(in_w-out_w)*(0.46+0.12*t/4)':y='(in_h-out_h)*(0.28+0.45*t/4)',fps=30,format=yuv420p",
+        "scale=2600:4622:force_original_aspect_ratio=increase,crop=1080:1920:x='(in_w-out_w)*(0.05+0.75*t/4)':y='(in_h-out_h)*(0.10+0.45*t/4)',fps=30,format=yuv420p",
+        "scale=2600:4622:force_original_aspect_ratio=increase,crop=1080:1920:x='(in_w-out_w)*(0.62-0.22*t/4)':y='(in_h-out_h)*(0.38-0.20*t/4)',fps=30,format=yuv420p"
+      ];
+      ff(["-loop","1","-i",ip,"-t","4","-vf",moves[i < 3 ? i : 3],"-an","-c:v","libx264","-preset","veryfast","-crf","20","-pix_fmt","yuv420p",clip]);
+    }
     clips.push(clip);
   }
 
