@@ -9,8 +9,8 @@ const POLLINATIONS_API_KEY = process.env.POLLINATIONS_API_KEY || "";
 const HF_TOKEN = process.env.HF_TOKEN;
 const TOPIC = process.env.TOPIC || "AUTO_RANDOM";
 
-if (!GEMINI_API_KEY || !HF_TOKEN) {
-  throw new Error("Missing GEMINI_API_KEY or HF_TOKEN");
+if (!GEMINI_API_KEY) {
+  throw new Error("Missing GEMINI_API_KEY");
 }
 
 const OUT = path.join(process.cwd(), "output_up_movement");
@@ -180,10 +180,17 @@ Do not include narration, captions, logos, UI, watermarks, readable text, split 
     console.log("Generating image",i+1);
     await image(sp,ip);
     const clip=`/tmp/up_${i+1}.mp4`;
-    if (i === 3) {
-      console.log("Generating AI motion for S4 OHPS scene only (free-mode: 1 ZeroGPU call)");
-      motion(ip,scenes[i],vp);
-      ff(["-stream_loop","-1","-i",vp,"-t","4","-vf","scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30,format=yuv420p","-an","-c:v","libx264","-preset","veryfast","-crf","20",clip]);
+    if (i === 3 && HF_TOKEN) {
+      console.log("Trying AI motion for S4 OHPS scene (1 ZeroGPU call).");
+      try {
+        motion(ip,scenes[i],vp);
+        ff(["-stream_loop","-1","-i",vp,"-t","4","-vf","scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30,format=yuv420p","-an","-c:v","libx264","-preset","veryfast","-crf","20","-pix_fmt","yuv420p",clip]);
+        console.log("S4 AI motion succeeded.");
+      } catch (e) {
+        console.log("S4 AI motion unavailable; using cinematic fallback so the run still completes.");
+        console.log(String(e.message || e).slice(0,500));
+        ff(["-loop","1","-i",ip,"-t","4","-vf","scale=2600:4622:force_original_aspect_ratio=increase,crop=1080:1920:x='(in_w-out_w)*(0.62-0.22*t/4)':y='(in_h-out_h)*(0.38-0.20*t/4)',fps=30,format=yuv420p","-an","-c:v","libx264","-preset","veryfast","-crf","20","-pix_fmt","yuv420p",clip]);
+      }
     } else {
       console.log("Generating cinematic camera movement for S"+(i+1)+" with FFmpeg (no GPU)");
       const moves = [
