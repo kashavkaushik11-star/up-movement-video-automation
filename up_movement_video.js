@@ -5,10 +5,11 @@ const { execFileSync } = require("child_process");
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const CF_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
 const CF_ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID;
+const HF_TOKEN = process.env.HF_TOKEN;
 const TOPIC = process.env.TOPIC || "a mysterious object revealed inside a human hand";
 
-if (!GEMINI_API_KEY || !CF_TOKEN || !CF_ACCOUNT) {
-  throw new Error("Missing GEMINI_API_KEY, CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID");
+if (!GEMINI_API_KEY || !CF_TOKEN || !CF_ACCOUNT || !HF_TOKEN) {
+  throw new Error("Missing GEMINI_API_KEY, CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID or HF_TOKEN");
 }
 
 const OUT = path.join(process.cwd(), "output_up_movement");
@@ -52,7 +53,7 @@ function motion(imagePath,prompt,outPath){
 import sys, shutil
 from gradio_client import Client, handle_file
 img,prompt,out=sys.argv[1],sys.argv[2],sys.argv[3]
-client=Client("zerogpu-aoti/wan2-2-fp8da-aoti-faster")
+client=Client("zerogpu-aoti/wan2-2-fp8da-aoti-faster", token=sys.argv[4])
 result=client.predict(handle_file(img), prompt[:1200], 4, "", 4.0, 1.0, 1.0, 42, True, api_name="/generate_video")
 p=result[0] if isinstance(result,(list,tuple)) else result
 if isinstance(p,dict): p=p.get("path") or p.get("url")
@@ -60,7 +61,7 @@ if not p: raise RuntimeError(str(result))
 shutil.copyfile(p,out)
 `;
   fs.writeFileSync("/tmp/up_motion.py",py);
-  execFileSync("python",["/tmp/up_motion.py",imagePath,prompt,outPath],{stdio:"inherit"});
+  execFileSync("python",["/tmp/up_motion.py",imagePath,prompt,outPath,HF_TOKEN],{stdio:"inherit"});
 }
 
 function ff(args){execFileSync("ffmpeg",["-y",...args],{stdio:"inherit"});}
