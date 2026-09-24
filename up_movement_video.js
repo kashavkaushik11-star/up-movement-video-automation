@@ -135,34 +135,48 @@ function ff(args){execFileSync("ffmpeg",["-y",...args],{stdio:"inherit"});}
   const master=`Create ONE completely new viral short-video concept for this run.
 Run key: ${runKey}
 Preferred archetype: ${archetype}
-${autoMode ? "Choose the exact subject/location yourself. Do NOT reuse a generic hand/object reveal." : `User topic constraint: "${TOPIC}"`}
+${autoMode ? "Choose the exact subject/location yourself. The MAIN SUBJECT MUST BE A REALISTIC HUMAN PERSON." : `User topic constraint: "${TOPIC}"`}
 
-REFERENCE STYLE:
-The reference is a realistic vertical POV/cinematic action video: a person/camera approaches a physical situation, commits to the movement, the camera travels rapidly through real space with strong depth, then an unexpected visual event/reveal happens and a human reaction or payoff lands at the end.
-The feeling should be "wait... what?!", not a normal slideshow.
+REFERENCE VIDEO STYLE — FOLLOW THIS CLOSELY:
+Create the feeling of a real filmed viral action/cinematic video, not an AI slideshow.
+A real human is the continuous MAIN SUBJECT in one coherent real-world location.
+The camera starts from a high or distant position, then physically travels toward and around the human with strong depth and parallax: aerial dive, descending move, forward tracking, passing close to foreground objects, orbiting, push-in, or controlled approach.
+The human must visibly exist in the scene and perform a simple believable action or react naturally.
+The visual surprise comes from what the CAMERA discovers in the environment, not from replacing the human with a CGI object.
+The entire sequence should feel like one continuous real camera journey.
 
-CORE RULES:
-- Every run must be a DIFFERENT scenario, location, action and surprise.
-- Do not make all videos about hands, objects, tubes, drops or the same stunt; vary the concept.
-- The first 2-3 seconds must create curiosity.
-- Build tension and spatial movement continuously.
-- Around 12-17 seconds, deliver the main surprise/OHPS moment.
-- End with a clear payoff/reaction/reveal.
-- The camera must physically move through the scene: approach, dive, follow, pass, turn, fall, rise or squeeze through space.
-- No static shots, no simple digital zoom, no slideshow, no fake camera shake.
-- Photorealistic live-action look, believable physics, natural lighting, realistic people/anatomy.
-- Keep one coherent location and subject across all five scenes.
-- Make it plausible enough to feel like a real viral phone/cinematic video, while the surprise can be visually extraordinary.
-- Avoid dangerous instructions or imitation guidance; this is visual storytelling only.
+20-SECOND STRUCTURE:
+S1 (0-4s) = HIGH/DISTANT ESTABLISHING SHOT. Real human clearly visible in the environment. Camera begins above/behind/distant and starts moving toward the human. Create immediate curiosity.
+S2 (4-8s) = DESCENDING APPROACH. Camera rapidly descends/advances toward the same human. Strong foreground/midground/background parallax. Human action continues naturally.
+S3 (8-12s) = CLOSE TRACKING/COMMITMENT. Camera gets much closer, passes through or around the environment while tracking the same human. Tension increases and the viewer expects one obvious outcome.
+S4 (12-16s) = OHPS SURPRISE. Camera suddenly reveals an unexpected real-world spatial event directly around/in front of the human. Keep the same human, location, lighting and physical continuity. This is the strongest visual moment.
+S5 (16-20s) = PAYOFF. Camera completes the move with a controlled push-in/orbit/reframe toward the same human and captures a believable human reaction or final reveal.
+
+HUMAN CONTINUITY:
+- One main human throughout all 5 scenes.
+- Photorealistic live-action human, natural skin, face, hair, hands, body proportions and clothing.
+- Keep the person's identity, clothing and appearance consistent across S1-S5.
+- Human must be clearly visible in at least S1, S2, S3 and S5.
+- Do not make the human a tiny background figure.
+- Do not turn the human into an object, statue, robot or CGI character.
+- Natural body movement and believable interaction with the environment.
+
+CAMERA:
+- Physical camera movement only: drone dive, crane descent, tracking, orbit, pass-by, push-in, rise or fall.
+- Strong depth/parallax and realistic motion blur.
+- No static composition, no slideshow feeling, no simple digital zoom, no fake shake.
+- Camera movement must change perspective and reveal new spatial information.
+
+VISUAL QUALITY:
+- Photorealistic live-action, premium cinematic photography.
+- Real-world location, realistic materials, natural dramatic lighting, believable physics.
+- Vertical 9:16 composition.
+- No text, captions, logos, UI, watermark, collage or split screen.
+- No generic abstract tunnels, floating objects, giant hands, or fantasy CGI unless the surprise specifically requires a believable real-world element.
 
 Return exactly 5 lines, labeled S1 through S5.
-S1 = curiosity/setup: establish the strange situation and start moving.
-S2 = commitment: camera moves deeper/faster and raises tension.
-S3 = escalation: movement becomes visually intense and the audience thinks they know what will happen.
-S4 = SURPRISE/OHPS MOMENT: reveal the unexpected event, perspective or transformation.
-S5 = payoff: camera reaches/reframes the result and captures a believable reaction or final reveal.
-
-Do not include narration, captions, logos, UI, watermarks, readable text, split screens or collages.`;
+Each line must describe: HUMAN + LOCATION + ACTION + CAMERA MOVEMENT + what is visible/revealed.
+Do not write narration or dialogue.`;
   const raw=await gemini(master);
   const lines=raw.split(/\n+/).map(x=>x.trim()).filter(Boolean);
   const scenes=[];
