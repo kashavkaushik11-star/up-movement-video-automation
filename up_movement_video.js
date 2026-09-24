@@ -109,74 +109,82 @@ function ff(args){execFileSync("ffmpeg",["-y",...args],{stdio:"inherit"});}
   const runKey = process.env.GITHUB_RUN_ID || String(Date.now());
   const autoMode = !TOPIC || TOPIC === "AUTO_RANDOM";
   const archetypes = [
-    "extreme water-slide POV with a hidden drop or unexpected exit",
-    "rooftop-to-street camera dive with a safe-looking path that suddenly changes",
-    "giant tunnel or pipe traversal with an unexpected opening at the end",
-    "roller-coaster or amusement-ride POV with a sudden visual reveal",
-    "mountain or cliff-path POV where the route suddenly disappears and reveals a safe hidden passage",
-    "underwater tunnel POV with a surprise object or creature-like visual reveal",
-    "warehouse or industrial-machine POV with moving obstacles and a last-second reveal",
-    "forest trail POV where the camera rushes toward an apparently blocked path that opens unexpectedly",
-    "giant slide, chute or spiral structure with a surprising final landing",
-    "street-level POV chasing a moving object that suddenly changes direction into a hidden space",
-    "bridge or cable-structure POV with a dramatic drop and unexpected safe platform",
-    "giant transparent tube or glass walkway with a sudden perspective illusion",
-    "sports or stunt POV with a fast approach followed by an unexpected visual payoff",
-    "theme-park attraction POV with a fake dead end followed by a sudden reveal",
-    "giant architectural structure where the camera enters a tiny opening and emerges somewhere surprising",
-    "cinematic escape-route POV with doors, turns and a final unexpected reveal",
-    "high-altitude POV diving toward a structure and discovering a hidden interior",
-    "giant ball or object rolling toward camera with a last-second perspective twist",
-    "construction-site POV with cranes, platforms and a sudden downward movement",
-    "mysterious real-world location POV built around scale, depth and one strong surprise"
+    "underwater discovery: a real diver approaches a dark crack in the seabed and discovers a complete submerged city with lights still glowing",
+    "abandoned metro discovery: a real person walks beside an old railway tunnel and the camera dives into a hidden station where a train is still moving",
+    "mountain mystery: a real climber reaches a rock wall and a narrow opening reveals a massive underground world behind it",
+    "desert secret: a real traveler crosses empty dunes and the camera drops into a buried ancient city hidden beneath the sand",
+    "forest mystery: a real hiker follows strange lights through dense forest and discovers a huge modern structure hidden underground",
+    "frozen-world reveal: a real explorer walks across a glacier and a crack opens into a vast illuminated chamber beneath the ice",
+    "ocean cliff reveal: a real diver swims toward a cliff and the camera passes through a natural opening into a gigantic hidden cavern",
+    "rooftop mystery: a real person runs across rooftops and the camera follows them into a doorway that reveals an impossible giant interior space",
+    "old-house mystery: a real person enters an abandoned house and the camera moves through a wall opening into a huge forgotten underground facility",
+    "waterfall secret: a real hiker approaches a waterfall and the camera passes behind it to reveal a hidden illuminated settlement",
+    "bridge discovery: a real person crosses a huge bridge and the camera dives below it to reveal an entire hidden city built underneath",
+    "cave discovery: a real explorer enters a normal cave and the camera reveals that the cave continues into a giant underground road system",
+    "construction-site mystery: a real worker notices movement below a construction pit and the camera dives down to reveal a forgotten structure",
+    "jungle temple reveal: a real explorer follows a narrow jungle path and discovers a gigantic ancient complex hidden behind vegetation",
+    "storm escape: a real person moves through heavy rain toward shelter and the camera enters the shelter to reveal a vast underground world",
+    "lake mystery: a real diver enters a quiet lake and discovers a fully intact room with lights, furniture and a mysterious doorway",
+    "city manhole mystery: a real person opens an ordinary street access door and the camera dives down into an enormous hidden tunnel network",
+    "cliffside house reveal: a real person approaches a remote house on a cliff and the camera reveals a huge structure carved inside the mountain",
+    "snow village mystery: a real traveler walks through an empty snowy village and discovers warm lights coming from a giant underground settlement",
+    "real-world impossible scale: a real human enters an ordinary location and the camera progressively reveals a much larger hidden environment than expected"
   ];
   const archetype = archetypes[Number(runKey.replace(/\\D/g,"").slice(-4) || "0") % archetypes.length];
 
-  const master=`Create ONE completely new viral short-video concept for this run.
+  const master=`Create ONE highly watchable viral cinematic short concept for this run.
 Run key: ${runKey}
-Preferred archetype: ${archetype}
-${autoMode ? "Choose the exact subject/location yourself. The MAIN SUBJECT MUST BE A REALISTIC HUMAN PERSON." : `User topic constraint: "${TOPIC}"`}
+Preferred concept: ${archetype}
+${autoMode ? "Choose the exact subject/location yourself. The MAIN SUBJECT MUST BE A REAL HUMAN." : `User topic constraint: "${TOPIC}"`}
 
-REFERENCE VIDEO STYLE — FOLLOW THIS CLOSELY:
-Create the feeling of a real filmed viral action/cinematic video, not an AI slideshow.
-A real human is the continuous MAIN SUBJECT in one coherent real-world location.
-The camera starts from a high or distant position, then physically travels toward and around the human with strong depth and parallax: aerial dive, descending move, forward tracking, passing close to foreground objects, orbiting, push-in, or controlled approach.
-The human must visibly exist in the scene and perform a simple believable action or react naturally.
-The visual surprise comes from what the CAMERA discovers in the environment, not from replacing the human with a CGI object.
-The entire sequence should feel like one continuous real camera journey.
+CORE GOAL:
+The viewer must think "WAIT... WHAT IS THAT?" and keep watching for the reveal.
+This must feel like a real human filmed in a real location with a moving physical camera.
+Do NOT make a generic action montage. Build one mystery and reveal it.
 
-20-SECOND STRUCTURE:
-S1 (0-4s) = HIGH/DISTANT ESTABLISHING SHOT. Real human clearly visible in the environment. Camera begins above/behind/distant and starts moving toward the human. Create immediate curiosity.
-S2 (4-8s) = DESCENDING APPROACH. Camera rapidly descends/advances toward the same human. Strong foreground/midground/background parallax. Human action continues naturally.
-S3 (8-12s) = CLOSE TRACKING/COMMITMENT. Camera gets much closer, passes through or around the environment while tracking the same human. Tension increases and the viewer expects one obvious outcome.
-S4 (12-16s) = OHPS SURPRISE. Camera suddenly reveals an unexpected real-world spatial event directly around/in front of the human. Keep the same human, location, lighting and physical continuity. This is the strongest visual moment.
-S5 (16-20s) = PAYOFF. Camera completes the move with a controlled push-in/orbit/reframe toward the same human and captures a believable human reaction or final reveal.
+STORY FORMULA:
+HOOK (0-3s) -> APPROACH (3-8s) -> SUSPICION (8-12s) -> BIG REVEAL (12-16s) -> CLIFFHANGER (16-20s).
 
-HUMAN CONTINUITY:
-- One main human throughout all 5 scenes.
-- Photorealistic live-action human, natural skin, face, hair, hands, body proportions and clothing.
-- Keep the person's identity, clothing and appearance consistent across S1-S5.
-- Human must be clearly visible in at least S1, S2, S3 and S5.
-- Do not make the human a tiny background figure.
-- Do not turn the human into an object, statue, robot or CGI character.
-- Natural body movement and believable interaction with the environment.
+S1 (0-4s): Start with a striking but believable real-world scene. A real human is clearly visible doing one simple action. The camera starts high/distant and rapidly moves toward the human. Show one strange visual clue that creates a question.
+S2 (4-8s): Camera physically follows the SAME human deeper into the location. Reveal a second clue that makes the viewer suspect something hidden. Strong parallax and changing perspective.
+S3 (8-12s): The camera gets close to the human and follows their movement. The human notices something unexpected. Build tension immediately before the reveal. Do NOT reveal the answer yet.
+S4 (12-16s): BIG OHPS REVEAL. The camera suddenly passes around/through a physical opening or obstruction and reveals a huge unexpected environment or spatial discovery. The reveal must be visually obvious and dramatically larger/different than what came before.
+S5 (16-20s): Do NOT explain the reveal. Push/orbit toward the same human as they react naturally, then expose one final clue or moving silhouette/object in the revealed environment. End at the moment that creates a question for the next video.
+
+HUMAN:
+- One realistic human is the main character.
+- Keep human visible and important, not a tiny background figure.
+- Natural face, skin, hands, body proportions, hair and clothing.
+- Same identity and clothing across all five scenes.
+- Human performs believable actions and reacts naturally.
+- No CGI character, robot, statue or cartoon.
+
+LOCATION:
+- One coherent real-world location.
+- Same time of day and lighting direction.
+- Use foreground, midground and background depth.
+- The reveal must physically exist in the same world.
 
 CAMERA:
-- Physical camera movement only: drone dive, crane descent, tracking, orbit, pass-by, push-in, rise or fall.
-- Strong depth/parallax and realistic motion blur.
-- No static composition, no slideshow feeling, no simple digital zoom, no fake shake.
-- Camera movement must change perspective and reveal new spatial information.
+- Real physical camera language: drone dive, crane descent, tracking, orbit, pass-through, whip-pan, push-in, low fly-through.
+- Camera must physically change viewpoint and uncover new information.
+- Strong parallax, realistic motion blur, natural lens behavior.
+- Never use a static shot or simple digital zoom as the main movement.
 
-VISUAL QUALITY:
-- Photorealistic live-action, premium cinematic photography.
-- Real-world location, realistic materials, natural dramatic lighting, believable physics.
-- Vertical 9:16 composition.
-- No text, captions, logos, UI, watermark, collage or split screen.
-- No generic abstract tunnels, floating objects, giant hands, or fantasy CGI unless the surprise specifically requires a believable real-world element.
+REVEAL RULES:
+- The reveal must be BIG, clear and understandable within one second.
+- Prefer discoveries such as a hidden city, enormous underground chamber, submerged building, secret station, giant structure, hidden road, or impossible scale change that still looks physically filmed.
+- Avoid random monsters, floating CGI objects, giant hands, abstract shapes and meaningless explosions.
+- The surprise should come from SPACE and DISCOVERY, not cheap visual effects.
 
-Return exactly 5 lines, labeled S1 through S5.
-Each line must describe: HUMAN + LOCATION + ACTION + CAMERA MOVEMENT + what is visible/revealed.
-Do not write narration or dialogue.`;
+STYLE:
+Photorealistic live-action, premium cinematic photography, realistic human skin, realistic materials, believable physics, dramatic natural lighting, vertical 9:16, viral short-form pacing.
+No text, captions, logos, UI, watermark, collage or split screen.
+
+Return EXACTLY 5 lines labeled S1, S2, S3, S4, S5.
+Each line must include HUMAN + LOCATION + ACTION + CAMERA MOVEMENT + the new clue/reveal.
+No narration or dialogue.`;
+
   const raw=await gemini(master);
   const lines=raw.split(/\n+/).map(x=>x.trim()).filter(Boolean);
   const scenes=[];
@@ -190,7 +198,20 @@ Do not write narration or dialogue.`;
   for(let i=0;i<5;i++){
     const ip=path.join(OUT,`scene_${i+1}.png`);
     const vp=path.join(OUT,`motion_${i+1}.mp4`);
-    const sp=`Photorealistic LIVE-ACTION vertical 9:16 cinematic frame. Scene description: ${scenes[i]} IMPORTANT: the MAIN SUBJECT is a real human person, clearly visible, natural human face, realistic skin, realistic hands, realistic anatomy, natural body posture and believable clothing. Keep the SAME human appearance, hairstyle, clothing and identity across every scene. Real-world location, real physical environment, strong foreground/midground/background depth, natural dramatic lighting, realistic shadows, premium Hollywood live-action camera look, believable physics. The human must be integrated into the environment, not a CGI character. No giant objects as the main subject, no abstract shapes, no fantasy tunnel, no robot, no cartoon, no text, no logos, no watermark.`;
+    const sp=`Photorealistic LIVE-ACTION vertical 9:16 frame from a viral cinematic mystery film.
+Scene: ${scenes[i]}
+
+IMPORTANT:
+- MAIN SUBJECT = one real human person, clearly visible and physically integrated into the scene.
+- Keep the SAME human identity, approximate face, hairstyle, clothing and body appearance across all scenes.
+- Real-world location with strong foreground, midground and background depth.
+- Make the environment visually interesting and large enough to support a dramatic camera reveal.
+- The scene must contain the exact clue/reveal described in the scene line.
+- Make the reveal visually obvious, not subtle or abstract.
+- Natural human anatomy, realistic skin, hands, clothing and lighting.
+- Photorealistic live-action, premium cinema camera, realistic lens, realistic shadows, believable physics.
+- No cartoon, no CGI-looking human, no robot, no statue, no giant hands, no random monster, no text, no logo, no watermark, no split screen.`;
+
     console.log("Generating image",i+1);
     await image(sp,ip);
     const clip=`/tmp/up_${i+1}.mp4`;
