@@ -190,7 +190,7 @@ Do not write narration or dialogue.`;
   for(let i=0;i<5;i++){
     const ip=path.join(OUT,`scene_${i+1}.png`);
     const vp=path.join(OUT,`motion_${i+1}.mp4`);
-    const sp=`Photorealistic vertical 9:16 cinematic frame. Scene description: ${scenes[i]} Main subject clear and composed for a vertical 9:16 crop, realistic anatomy and materials, strong foreground/midground/background depth, natural dramatic lighting, premium live-action film look, believable physics, no text, no logos, no watermark.`;
+    const sp=`Photorealistic LIVE-ACTION vertical 9:16 cinematic frame. Scene description: ${scenes[i]} IMPORTANT: the MAIN SUBJECT is a real human person, clearly visible, natural human face, realistic skin, realistic hands, realistic anatomy, natural body posture and believable clothing. Keep the SAME human appearance, hairstyle, clothing and identity across every scene. Real-world location, real physical environment, strong foreground/midground/background depth, natural dramatic lighting, realistic shadows, premium Hollywood live-action camera look, believable physics. The human must be integrated into the environment, not a CGI character. No giant objects as the main subject, no abstract shapes, no fantasy tunnel, no robot, no cartoon, no text, no logos, no watermark.`;
     console.log("Generating image",i+1);
     await image(sp,ip);
     const clip=`/tmp/up_${i+1}.mp4`;
